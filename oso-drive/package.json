@@ -1,0 +1,13 @@
+{
+  "name": "sample-apps-node/oso-drive",
+  "dependencies": {
+    "@awaitjs/express": "0.9.0",
+    "dotenv": "16.x",
+    "express": "4.18.2",
+    "oso-cloud": "^1.3.0"
+  },
+  "scripts": {
+    "seed": "node ./scripts/seed",
+    "start": "node ."
+  }
+}
