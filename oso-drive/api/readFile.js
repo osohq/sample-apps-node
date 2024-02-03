@@ -7,8 +7,9 @@ module.exports = async function readFile(req, res) {
   const userId = req.headers.authorization;
   const { id } = req.query;
 
-  console.log('R', id);
-  if (!oso.authorize({ type: 'User', id: userId }, 'read', { type: 'File', id })) {
+  const authorized = await oso.authorize({ type: 'User', id: userId }, 'read', { type: 'File', id });
+  console.log('R', id, userId, authorized);
+  if (!authorized) {
     return res.status(401).json({ message: 'Not authorized' });
   }
 

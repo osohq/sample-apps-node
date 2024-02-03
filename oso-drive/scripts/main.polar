@@ -14,10 +14,14 @@ resource File {
     roles = ["reader", "writer"];
     relations = {
         folder: Folder,
+        owner: User
     };
+
+    "write" if "owner";
 
     role if role on "folder";
 
+    "read" if "write";
     "read"  if "reader";
     "write" if "writer";
 }

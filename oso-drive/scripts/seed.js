@@ -15,6 +15,13 @@ async function main() {
   const policy = fs.readFileSync('./scripts/main.polar', 'utf8');
   await oso.policy(policy);
 
+  const res = await oso.tell(
+    'has_relation',
+    { type: 'File', id: 'tps-report.txt' },
+    'owner',
+    { type: 'User', id: 'Bill' }
+  );
+
   await oso.bulk(
     [['is_public', { type: 'File', id: 'test.txt' }, { type: 'Boolean', id: 'true' }]]
   );
