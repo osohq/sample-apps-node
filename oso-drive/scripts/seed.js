@@ -24,7 +24,7 @@ async function main() {
 
   await oso.tell(
     'has_relation',
-    { type: 'File', id: 'tps-report.txt' },
+    { type: 'File', id: 'tps-reports/tps-report.txt' },
     'folder',
     { type: 'Folder', id: 'tps-reports' }
   );
@@ -63,7 +63,7 @@ async function main() {
   );
   await oso.tell(
     'is_readable_by_org',
-    { type: 'File', id: 'tps-report.txt' }
+    { type: 'File', id: 'tps-reports/tps-report.txt' }
   );
 
   console.log('Done');

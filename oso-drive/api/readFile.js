@@ -4,7 +4,7 @@ const { files } = require('../state');
 const oso = require('../oso');
 
 module.exports = async function readFile(req, res) {
-  const userId = req.headers.authorization;
+  const userId = req.headers.authorization ?? '_';
   const { id } = req.query;
 
   const authorized = await oso.authorize(

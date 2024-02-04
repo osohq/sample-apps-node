@@ -9,7 +9,7 @@ module.exports = async function updateFile(req, res) {
   assert.ok(content);
   assert.ok(req.headers.authorization);
   
-  const userId = req.headers.authorization;
+  const userId = req.headers.authorization ?? '_';
 
   const authorized = await oso.authorize(
     { type: 'User', id: userId },

@@ -15,3 +15,34 @@ Example Output:
 $ curl -H "authorization: foo" http://localhost:3000/readFile?id=test.txt
 {"file":{"id":"test.txt","content":"hello world"}}
 ```
+
+## Examples
+
+1. Anyone can read public files:
+
+```
+{"file":{"id":"test.txt","content":"hello world"}}
+```
+
+2. Users can read their own files:
+
+```
+$ curl -H "authorization: Peter" http://localhost:3000/readFile?id=tps-reports/tps-report.txt
+{"file":{"id":"tps-reports/tps-report.txt","content":"TODO: write TPS report"}}
+```
+
+3. Members of an organization can read files and folders that are part of the organization and have `is_readable_by_org` set
+
+```
+$ curl -H "authorization: Samir" http://localhost:3000/readFile?id=tps-reports/tps-report.txt
+{"file":{"id":"tps-reports/tps-report.txt","content":"TODO: write TPS report"}}
+```
+
+4. Admins of an organization can write files, but not all members of the org can write files.
+
+```
+$ curl -H 'content-type:application/json' -X PUT -d '{"id":"tps-reports/tps-report.txt", "content":"Hi Peter"}' -H "authorization: Samir" http://localhost:3000/updateFile
+{"message":"Not authorized"}
+$ curl -H 'content-type:application/json' -X PUT -d '{"id":"tps-reports/tps-report.txt", "content":"Needs work"}' -H "authorization: Bill" http://localhost:3000/updateFile
+{"file":{"id":"tps-reports/tps-report.txt","content":"Needs work"}}
+```
