@@ -15,15 +15,55 @@ async function main() {
   const policy = fs.readFileSync('./scripts/main.polar', 'utf8');
   await oso.policy(policy);
 
-  const res = await oso.tell(
+  await oso.tell(
     'has_relation',
     { type: 'File', id: 'tps-report.txt' },
     'owner',
-    { type: 'User', id: 'Bill' }
+    { type: 'User', id: 'Peter' }
   );
 
-  await oso.bulk(
-    [['is_public', { type: 'File', id: 'test.txt' }, { type: 'Boolean', id: 'true' }]]
+  await oso.tell(
+    'has_relation',
+    { type: 'File', id: 'tps-report.txt' },
+    'folder',
+    { type: 'Folder', id: 'tps-reports' }
+  );
+
+  await oso.tell(
+    'has_relation',
+    { type: 'Folder', id: 'tps-reports' },
+    'organization',
+    { type: 'Organization', id: 'initech' }
+  );
+
+  await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Bill' },
+    'admin',
+    { type: 'Organization', id: 'initech' }
+  );
+
+  await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Peter' },
+    'member',
+    { type: 'Organization', id: 'initech' }
+  );
+
+  await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Samir' },
+    'member',
+    { type: 'Organization', id: 'initech' }
+  );
+
+  await oso.tell(
+    'is_public',
+    { type: 'File', id: 'test.txt' }
+  );
+  await oso.tell(
+    'is_readable_by_org',
+    { type: 'File', id: 'tps-report.txt' }
   );
 
   console.log('Done');

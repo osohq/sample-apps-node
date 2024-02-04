@@ -2,6 +2,6 @@
 
 exports.files = [
   { id: 'test.txt', content: 'hello world' },
-  { id: 'tps-report.txt', content: 'Peter Gibbons is having trouble with his TPS reports' }
+  { id: 'tps-report.txt', content: 'TODO: write TPS report' }
 ];
 exports.folders = [];
