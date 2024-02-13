@@ -2,23 +2,24 @@ actor User { }
 
 resource Organization {
     roles = ["admin", "member"];
+
+    "member" if "admin";
 }
 
 resource Folder {
-    roles = ["reader", "writer", "member", "admin"];
+    roles = ["reader", "writer"];
     relations = {
         folder: Folder,
         organization: Organization
     };
 
     role if role on "folder";
-    role if role on "organization";
     "writer" if "admin" on "organization";
 }
 
 resource File {
     permissions = ["read", "write"];
-    roles = ["reader", "writer", "member", "admin"];
+    roles = ["reader", "writer"];
     relations = {
         folder: Folder,
         owner: User
@@ -33,9 +34,15 @@ resource File {
     "write" if "writer";
 }
 
-has_permission(user: User, "read", file: File) if
+has_role(user: User, "reader", folder: Folder) if
+  organization matches Organization and
+  is_readable_by_org(folder) and
+  has_role(user, "member", organization);
+
+has_role(user: User, "reader", file: File) if
+  organization matches Organization and
   is_readable_by_org(file) and
-  has_role(user, "member", file);
+  has_role(user, "member", organization);
 
 has_permission(_user: User, "read", file: File) if
   is_public(file);
