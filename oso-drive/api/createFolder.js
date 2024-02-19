@@ -1,24 +1,24 @@
 'use strict';
 
 const assert = require('assert');
-const { files } = require('../state');
+const { folders } = require('../state');
 const oso = require('../oso');
 
-module.exports = async function createFile(req, res) {
-  const file = req.body;
-  assert.ok(file);
+module.exports = async function createFolder(req, res) {
+  const folder = req.body;
+  assert.ok(folder);
   assert.ok(req.headers.authorization);
 
-  if (files.find(f => f.id === file.id)) {
-    throw new Error('File already exists!');
+  if (folders.find(f => f.id === folder.id)) {
+    throw new Error('Folder already exists!');
   }
 
-  files.push(file);
-  if (file.folder) {
+  folders.push(folder);
+  if (folder.folder) {
     const authorized = await oso.authorize(
       { type: 'User', id: userId },
       'write',
-      { type: 'Folder', id: file.folder }
+      { type: 'Folder', id: folder.folder }
     );
 
     if (!authorized) {
@@ -27,18 +27,18 @@ module.exports = async function createFile(req, res) {
 
     await oso.tell(
       'has_relation', // Fact type
-      { type: 'File', id: file.id }, // Resource
+      { type: 'Folder', id: folder.id }, // Resource
       'folder', // Relation
-      { type: 'Folder', id: file.folder } // Actor
+      { type: 'Folder', id: folder.folder } // Actor
     );
   }
 
   await oso.tell(
     'has_relation', // Fact type
-    { type: 'File', id: file.id }, // Resource
+    { type: 'Folder', id: folder.id }, // Resource
     'owner', // Relation
     { type: 'User', id: req.headers.authorization } // Actor
-  )
+  );
 
-  return res.json({ file });
+  return res.json({ folder });
 };

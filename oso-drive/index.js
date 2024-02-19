@@ -7,7 +7,9 @@ const { addAsync } = require('@awaitjs/express');
 const express = require('express');
 
 const createFile = require('./api/createFile');
+const createFolder = require('./api/createFolder');
 const readFile = require('./api/readFile');
+const readFolder = require('./api/readFolder');
 const updateFile = require('./api/updateFile');
 
 main().catch(error => {
@@ -23,7 +25,9 @@ async function main() {
   app.use(express.json());
 
   app.postAsync('/createFile', createFile);
+  app.postAsync('/createFolder', createFolder);
   app.getAsync('/readFile', readFile);
+  app.getAsync('/readFolder', readFolder);
   app.putAsync('/updateFile', updateFile);
 
   await app.listen(3000);

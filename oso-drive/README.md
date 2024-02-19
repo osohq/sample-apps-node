@@ -7,14 +7,24 @@
 3. Copy `.env.example` to `.env` and set the `OSO_CLOUD_API_KEY` entry in `.env` to your Oso Cloud API key
 4. Run `npm run seed`. This will overwrite any policy you currently have set up in Oso Cloud.
 5. Run `npm start`.
-6. Run the following `curl` command to verify that you can read a public file: `curl -H "authorization: foo" http://localhost:3000/readFile?id=test.txt`
+6. Run the following `curl` command to verify that you can read a public file: `curl -H "authorization: Peter" http://localhost:3000/readFile?id=test.txt`
 
 Example Output:
 
 ```
-$ curl -H "authorization: foo" http://localhost:3000/readFile?id=test.txt
-{"file":{"id":"test.txt","content":"hello world"}}
+$ curl -H "authorization: Peter" http://localhost:3000/readFile?id=test.txt
+{
+  "file": {
+    "id": "test.txt",
+    "content": "hello world"
+  },
+  "users": {}
+}
 ```
+
+For simplicity, the `authorization` header contains the user's id.
+Which is also the user's name.
+So `curl -H "authorization: Peter" http://localhost:3000/readFile?id=test.txt` means "read file 'test.txt' as the user 'Peter'"
 
 ## Examples
 
@@ -89,5 +99,35 @@ $ curl -H 'content-type:application/json' -X PUT -d '{"id":"tps-reports/tps-repo
     "id": "tps-reports/tps-report.txt",
     "content": "Needs work"
   }
+}
+```
+
+6. Anyone can create a top-level folder and add files to the folder
+
+```
+$ curl -H 'content-type:application/json' -X POST -d '{"id":"my-folder"}' -H "authorization: Peter" http://localhost:3000/createFolder
+{
+  "folder": {
+    "id": "my-folder"
+  }
+}
+$ curl -H 'content-type:application/json' -X POST -d '{"id":"my-folder/test.txt", "content":"hello"}' -H "authorization: Peter" http://localhost:3000/createFile
+{
+  "file": {
+    "id": "my-folder/test.txt",
+    "content": "hello"
+  }
+}
+$ curl -H "authorization: Peter" http://localhost:3000/readFile?id=my-folder/test.txt
+{
+  "file": {
+    "id": "my-folder/test.txt",
+    "content": "hello"
+  },
+  "users": {}
+}
+$ curl -H "authorization: Bill" http://localhost:3000/readFile?id=my-folder/test.txt
+{
+  "message": "Not authorized"
 }
 ```
