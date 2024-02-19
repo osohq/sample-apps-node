@@ -58,11 +58,25 @@ async function main() {
   );
 
   await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Michael' },
+    'member',
+    { type: 'Organization', id: 'initech' }
+  );
+
+  await oso.tell(
     'is_public',
     { type: 'File', id: 'test.txt' }
   );
   await oso.tell(
     'is_readable_by_org',
+    { type: 'File', id: 'tps-reports/tps-report.txt' }
+  );
+
+  await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Michael' },
+    'writer',
     { type: 'File', id: 'tps-reports/tps-report.txt' }
   );
 

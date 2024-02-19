@@ -11,6 +11,16 @@ module.exports = async function createFile(req, res) {
 
   files.push(file);
   if (file.folder) {
+    const authorized = await oso.authorize(
+      { type: 'User', id: userId },
+      'write',
+      { type: 'Folder', id: file.folder }
+    );
+
+    if (!authorized) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
     await oso.tell(
       'has_relation', // Fact type
       { type: 'File', id: file.id }, // Resource

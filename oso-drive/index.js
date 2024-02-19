@@ -18,6 +18,8 @@ main().catch(error => {
 async function main() {
   const app = addAsync(express());
 
+  app.set('json spaces', 2);
+
   app.use(express.json());
 
   app.postAsync('/createFile', createFile);
