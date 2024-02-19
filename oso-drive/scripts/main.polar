@@ -11,8 +11,11 @@ resource Folder {
     roles = ["reader", "writer"];
     relations = {
         folder: Folder,
-        organization: Organization
+        organization: Organization,
+        owner: User
     };
+
+    "writer" if "owner";
 
     role if role on "folder";
     "writer" if "admin" on "organization";
@@ -30,7 +33,7 @@ resource File {
         owner: User
     };
 
-    "write" if "owner";
+    "writer" if "owner";
 
     role if role on "folder";
 
@@ -58,6 +61,27 @@ has_role(user: User, "reader", file: File) if
 
 has_permission(_user: User, "read", file: File) if
     is_public(file);
+
+test "can write folder and contents if file owner" {
+    setup {
+        has_relation(File{"tps-reports/tps-report-1999.txt"}, "owner", User{"Peter"});
+    }
+
+    assert allow(User{"Peter"}, "write", File{"tps-reports/tps-report-1999.txt"});
+    assert_not allow(User{"Michael"}, "write", File{"tps-reports/tps-report-1999.txt"});
+}
+
+test "can write folder and contents if folder owner" {
+    setup {
+        has_relation(Folder{"tps-reports"}, "owner", User{"Bill"});
+        has_relation(File{"tps-reports/tps-report-1999.txt"}, "folder", Folder{"tps-reports"});
+        has_relation(File{"payroll/office-expenses.txt"}, "folder", Folder{"payroll"});
+    }
+
+    assert allow(User{"Bill"}, "write", File{"tps-reports/tps-report-1999.txt"});
+    assert allow(User{"Bill"}, "write", Folder{"tps-reports"});
+    assert_not allow(User{"Peter"}, "write", Folder{"tps-reports"});
+}
 
 test "can read folder if member of org and folder is readable by org" {
     setup {
