@@ -108,3 +108,26 @@ test "can read file if member of org and folder is readable by org" {
     assert allow(User{"Samir"}, "read", File{"tps-reports/tps-report-1999.txt"});
     assert_not allow(User{"Samir"}, "read", File{"payroll/office-expenses.txt"});
 }
+
+test "can read public file" {
+    setup {
+        is_public(File{"test.txt"});
+    }
+
+    assert allow(User{"Samir"}, "read", File{"test.txt"});
+    assert_not allow(User{"Samir"}, "read", File{"text2.txt"});
+    assert_not allow(User{"Samir"}, "write", File{"text.txt"});
+}
+
+test "roles on folders bubble down to files in subfolders" {
+    setup {
+        has_role(User{"Samir"}, "reader", Folder{"tps-reports"});
+        has_relation(Folder{"tps-reports/1999"}, "folder", Folder{"tps-reports"});
+        has_relation(File{"tps-reports/1999/peter.txt"}, "folder", Folder{"tps-reports/1999"});
+    }
+
+    assert allow(User{"Samir"}, "read", Folder{"tps-reports"});
+    assert allow(User{"Samir"}, "read", Folder{"tps-reports/1999"});
+    assert allow(User{"Samir"}, "read", File{"tps-reports/1999/peter.txt"});
+    assert_not allow(User{"Samir"}, "read", Folder{"payroll"});
+}
