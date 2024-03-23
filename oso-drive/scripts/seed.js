@@ -80,5 +80,12 @@ async function main() {
     { type: 'File', id: 'tps-reports/tps-report.txt' }
   );
 
+  await oso.tell(
+    'has_role',
+    { type: 'User', id: 'Bob' },
+    'reader',
+    { type: 'Folder', id: 'tps-reports' }
+  );
+
   console.log('Done');
 }
